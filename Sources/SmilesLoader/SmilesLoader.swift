@@ -11,7 +11,7 @@ import SmilesFontsManager
             .filter({$0.isKeyWindow}).first
     }
     
-    @objc public static func show(with message: String? = nil) {
+    @objc public static func show(with message: String? = nil, isClearBackground: Bool = false) {
         
         if let window = keyWindow {
             guard !window.subviews.contains(where: { $0 is BlockingActivityIndicator }) else {
@@ -22,7 +22,9 @@ import SmilesFontsManager
             activityIndicator.setupMessage(message: message)
             activityIndicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             activityIndicator.frame = window.bounds
-            
+            if isClearBackground {
+                activityIndicator.backgroundColor = .clear
+            }
             UIView.transition(
                 with: window,
                 duration: 0.3,
@@ -35,7 +37,7 @@ import SmilesFontsManager
         
     }
     
-    @objc public static func show(on view: UIView, with message: String? = nil) {
+    @objc public static func show(on view: UIView, with message: String? = nil, isClearBackground: Bool = false) {
         
         guard !view.subviews.contains(where: { $0 is BlockingActivityIndicator }) else {
             return
@@ -45,7 +47,9 @@ import SmilesFontsManager
         activityIndicator.setupMessage(message: message)
         activityIndicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         activityIndicator.frame = view.bounds
-        
+        if isClearBackground {
+            activityIndicator.backgroundColor = .clear
+        }
         UIView.transition(
             with: view,
             duration: 0.3,
@@ -79,8 +83,7 @@ import SmilesFontsManager
 
 final class BlockingActivityIndicator: UIView {
     
-    private let loaderColour = UIColor(red: 135.0 / 255.0, green: 84.0 / 255.0, blue: 161.0 / 255.0, alpha: 1.0)
-//    private let loaderColour = UIColor.red
+    private let loaderColor = UIColor(red: 135.0 / 255.0, green: 84.0 / 255.0, blue: 161.0 / 255.0, alpha: 1.0)
     private let containerView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -104,14 +107,14 @@ final class BlockingActivityIndicator: UIView {
         self.activityIndicator = NVActivityIndicatorView(
             frame: CGRect(
                 origin: .zero,
-                size: CGSize(width: 80, height: 80)
+                size: CGSize(width: 60, height: 60)
             )
         )
-        activityIndicator.type = .ballScaleMultiple
-        activityIndicator.color = loaderColour
+        activityIndicator.type = .ballClipRotate
+        activityIndicator.color = loaderColor
         activityIndicator.startAnimating()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.textColor = loaderColour
+        messageLabel.textColor = loaderColor
         super.init(frame: frame)
         backgroundColor = UIColor.white.withAlphaComponent(0.75)
         setupViews()
@@ -133,11 +136,11 @@ final class BlockingActivityIndicator: UIView {
     }
     
     func setupMessage(message: String?) {
-        if let message {
-            messageLabel.text = message
-        } else {
+//        if let message {
+//            messageLabel.text = message
+//        } else {
             messageLabel.isHidden = true
-        }
+//        }
     }
     
     required init?(coder: NSCoder) {
