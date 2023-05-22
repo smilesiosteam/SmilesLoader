@@ -14,6 +14,7 @@ import SmilesFontsManager
     @objc public static func show(with message: String? = nil, isClearBackground: Bool = false) {
         
         if let window = keyWindow {
+            
             guard !window.subviews.contains(where: { $0 is BlockingActivityIndicator }) else {
                 return
             }
@@ -25,14 +26,27 @@ import SmilesFontsManager
             if isClearBackground {
                 activityIndicator.backgroundColor = .clear
             }
-            UIView.transition(
-                with: window,
-                duration: 0.3,
-                options: .transitionCrossDissolve,
-                animations: {
-                    window.addSubview(activityIndicator)
+            if let _ = window.rootViewController as? UITabBarController {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    UIView.transition(
+                        with: window,
+                        duration: 0.3,
+                        options: .transitionCrossDissolve,
+                        animations: {
+                            window.addSubview(activityIndicator)
+                        }
+                    )
                 }
-            )
+            } else {
+                UIView.transition(
+                    with: window,
+                    duration: 0.3,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        window.addSubview(activityIndicator)
+                    }
+                )
+            }
         }
         
     }
