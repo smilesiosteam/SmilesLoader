@@ -28,24 +28,10 @@ import SmilesFontsManager
             }
             if let _ = window.rootViewController as? UITabBarController {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    UIView.transition(
-                        with: window,
-                        duration: 0.3,
-                        options: .transitionCrossDissolve,
-                        animations: {
-                            window.addSubview(activityIndicator)
-                        }
-                    )
+                    window.addSubview(activityIndicator)
                 }
             } else {
-                UIView.transition(
-                    with: window,
-                    duration: 0.3,
-                    options: .transitionCrossDissolve,
-                    animations: {
-                        window.addSubview(activityIndicator)
-                    }
-                )
+                window.addSubview(activityIndicator)
             }
         }
         
@@ -64,21 +50,13 @@ import SmilesFontsManager
         if isClearBackground {
             activityIndicator.backgroundColor = .clear
         }
-        UIView.transition(
-            with: view,
-            duration: 0.3,
-            options: .transitionCrossDissolve,
-            animations: {
-                view.addSubview(activityIndicator)
-            }
-        )
+        view.addSubview(activityIndicator)
         
     }
     
     @objc public static func dismiss() {
         
         if let window = keyWindow {
-            
             if let _ = window.rootViewController as? UITabBarController {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     window.subviews.filter { $0 is BlockingActivityIndicator }.forEach { view in
