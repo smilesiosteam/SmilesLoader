@@ -78,8 +78,17 @@ import SmilesFontsManager
     @objc public static func dismiss() {
         
         if let window = keyWindow {
-            window.subviews.filter { $0 is BlockingActivityIndicator }.forEach { view in
-                view.removeFromSuperview()
+            
+            if let _ = window.rootViewController as? UITabBarController {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    window.subviews.filter { $0 is BlockingActivityIndicator }.forEach { view in
+                        view.removeFromSuperview()
+                    }
+                }
+            } else {
+                window.subviews.filter { $0 is BlockingActivityIndicator }.forEach { view in
+                    view.removeFromSuperview()
+                }
             }
         }
         
