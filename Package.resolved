@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smilesiosteam/SmilesFontsManager.git",
       "state" : {
-        "revision" : "c84212ed0003bea914602469ede4a8c07911ec1f",
-        "version" : "1.0.5"
+        "branch" : "main",
+        "revision" : "1a7068cb5a728cb7761aceb44d1c1ab2e88eba74"
       }
     }
   ],
