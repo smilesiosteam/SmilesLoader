@@ -31,7 +31,9 @@ import SmilesFontsManager
                     window.addSubview(activityIndicator)
                 }
             } else {
-                window.addSubview(activityIndicator)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    window.addSubview(activityIndicator)
+                }
             }
         }
         
