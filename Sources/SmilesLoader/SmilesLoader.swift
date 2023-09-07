@@ -67,7 +67,9 @@ import SmilesFontsManager
                 }
             } else {
                 window.subviews.filter { $0 is BlockingActivityIndicator }.forEach { view in
-                    view.removeFromSuperview()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        view.removeFromSuperview()
+                    }
                 }
             }
         }
