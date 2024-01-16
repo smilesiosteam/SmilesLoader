@@ -4,73 +4,65 @@ import SmilesUtilities
 
 @objc public class SmilesLoader: NSObject {
     
+    private static var keyWindow: UIWindow? {
+        return UIApplication.shared.connectedScenes
+            .compactMap({$0 as? UIWindowScene})
+            .first?.windows
+            .filter({$0.isKeyWindow}).first
+    }
+    private static var loaderViewTag = 999
+    
     @objc public static func show(with message: String? = nil, isClearBackground: Bool = false) {
         
-        if let topVC = topMostViewController(), !topVC.children.contains(where: {$0 is LoadingViewController}) {
-            let vc = LoadingViewController(message: message, isClearBackground: isClearBackground)
-            if let tabBar = topVC.tabBarController {
-                tabBar.addChild(asChildViewController: vc, diseredView: tabBar.view)
-            } else {
-                topVC.addChild(asChildViewController: vc, diseredView: topVC.view)
+        if let window = keyWindow {
+            guard window.viewWithTag(loaderViewTag) == nil else {
+                return
             }
+            let loader = createLoader(with: message, frame: window.bounds, isClearBackground: isClearBackground)
+            loader.tag = loaderViewTag
+            window.addSubview(loader)
         }
         
     }
     
     @objc public static func show(on view: UIView, with message: String? = nil, isClearBackground: Bool = false) {
         
-        guard !view.subviews.contains(where: { $0 is BlockingActivityIndicator }) else {
+        guard view.viewWithTag(loaderViewTag) == nil else {
             return
         }
-        
-        let activityIndicator = BlockingActivityIndicator()
-        activityIndicator.setupMessage(message: message)
-        activityIndicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        activityIndicator.frame = view.bounds
-        if isClearBackground {
-            activityIndicator.backgroundColor = .clear
-        }
-        view.addSubview(activityIndicator)
+        let loader = createLoader(with: message, frame: view.bounds, isClearBackground: isClearBackground)
+        loader.tag = loaderViewTag
+        view.addSubview(loader)
         
     }
     
     @objc public static func dismiss() {
         
-        if let topVC = topMostViewController() {
-            if let tabBar = topVC.tabBarController {
-                if let loadingVC = tabBar.children.first(where: {$0 is LoadingViewController}) {
-                    topVC.removeChild(asChildViewController: loadingVC)
-                }
-            } else {
-                if let loadingVC = topVC.children.first(where: {$0 is LoadingViewController}) {
-                    topVC.removeChild(asChildViewController: loadingVC)
-                }
-            }
+        if let window = keyWindow, let loader = window.viewWithTag(loaderViewTag) {
+            loader.removeFromSuperview()
         }
         
     }
     
     @objc public static func dismiss(from view: UIView) {
         
-        view.subviews.filter { $0 is BlockingActivityIndicator }.forEach { obj in
-            obj.removeFromSuperview()
+        if let loader = view.viewWithTag(loaderViewTag) {
+            loader.removeFromSuperview()
         }
         
     }
     
-    private static func topMostViewController(controller: UIViewController? = UIApplication.shared.windows.first { $0.isKeyWindow}?.rootViewController) -> UIViewController? {
-        if let navigationController = controller as? UINavigationController {
-            return topMostViewController(controller: navigationController.visibleViewController)
+    private static func createLoader(with message: String?, frame: CGRect, isClearBackground: Bool) -> BlockingActivityIndicator {
+        
+        let activityIndicator = BlockingActivityIndicator()
+        activityIndicator.setupMessage(message: message)
+        activityIndicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        activityIndicator.frame = frame
+        if isClearBackground {
+            activityIndicator.backgroundColor = .clear
         }
-        if let tabController = controller as? UITabBarController {
-            if let selected = tabController.selectedViewController {
-                return topMostViewController(controller: selected)
-            }
-        }
-        if let presented = controller?.presentedViewController {
-            return topMostViewController(controller: presented)
-        }
-        return controller
+        return activityIndicator
+        
     }
     
 }

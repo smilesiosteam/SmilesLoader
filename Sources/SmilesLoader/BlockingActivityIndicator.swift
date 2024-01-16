@@ -44,7 +44,7 @@ final class BlockingActivityIndicator: UIView {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textColor = loaderColor
         super.init(frame: frame)
-        backgroundColor = UIColor.white.withAlphaComponent(0.75)
+        backgroundColor = UIColor.white.withAlphaComponent(0.8)
         setupViews()
         
     }
